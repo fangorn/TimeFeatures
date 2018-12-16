@@ -26,9 +26,32 @@ class Timer extends DateTime {
         }
     }
 
+    public function addYears(int $yearsToAdd): void {
+        $dateInterval = new DateInterval('P' . abs($yearsToAdd) . 'Y');
+        $yearsToAdd > 0 ?
+            $this->add($dateInterval) :
+            $this->sub($dateInterval);
+    }
+
+    public function addMonth(int $monthsToAdd): void {
+        $dateInterval = new DateInterval('P' . abs($monthsToAdd) . 'M');
+        $monthsToAdd > 0 ?
+            $this->add($dateInterval) :
+            $this->sub($dateInterval);
+    }
+
     public function addWeeks(int $weeksToAdd): void {
-        $dateInterval = new DateInterval('P' . $weeksToAdd . 'W');
-        $this->add($dateInterval);
+        $dateInterval = new DateInterval('P' . abs($weeksToAdd) . 'W');
+        $weeksToAdd > 0 ?
+            $this->add($dateInterval) :
+            $this->sub($dateInterval);
+    }
+
+    public function addDays(int $daysToAdd): void {
+        $dateInterval = new DateInterval('P' . abs($daysToAdd) . 'D');
+        $daysToAdd > 0 ?
+            $this->add($dateInterval) :
+            $this->sub($dateInterval);
     }
 
     public function getFormattedString(): string {
