@@ -8,6 +8,7 @@ use DateTimeZone;
 
 class Timer extends DateTime {
 
+    // TODO: Сделать константы для падежей
     private const TIME_WORD_FORMS = [
         'y' => ['Nominative' => 'год',     'Genitive Singular' => 'года',    'Genitive Plural' => 'лет'],
         'm' => ['Nominative' => 'месяц',   'Genitive Singular' => 'месяца',  'Genitive Plural' => 'месяцев'],
@@ -17,7 +18,11 @@ class Timer extends DateTime {
         's' => ['Nominative' => 'секунда', 'Genitive Singular' => 'секунды', 'Genitive Plural' => 'секунд']
     ];
 
-    public function __construct(string $dateTimeString, string $timeZoneString = NULL) {
+    public function __construct(string $dateTimeString = 'now', string $timeZoneString = NULL) {
+        if ($dateTimeString === 'now') {
+            $dateTimeString = self::getCurrentDateTime();
+        }
+
         if (!empty($timeZoneString)) {
             $timeZone = new DateTimeZone($timeZoneString);
             parent::__construct($dateTimeString, $timeZone);
@@ -26,13 +31,36 @@ class Timer extends DateTime {
         }
     }
 
+    public function addYears(int $yearsToAdd): void {
+        $dateInterval = new DateInterval('P' . abs($yearsToAdd) . 'Y');
+        $yearsToAdd > 0 ?
+            $this->add($dateInterval) :
+            $this->sub($dateInterval);
+    }
+
+    public function addMonth(int $monthsToAdd): void {
+        $dateInterval = new DateInterval('P' . abs($monthsToAdd) . 'M');
+        $monthsToAdd > 0 ?
+            $this->add($dateInterval) :
+            $this->sub($dateInterval);
+    }
+
     public function addWeeks(int $weeksToAdd): void {
-        $dateInterval = new DateInterval('P' . $weeksToAdd . 'W');
-        $this->add($dateInterval);
+        $dateInterval = new DateInterval('P' . abs($weeksToAdd) . 'W');
+        $weeksToAdd > 0 ?
+            $this->add($dateInterval) :
+            $this->sub($dateInterval);
+    }
+
+    public function addDays(int $daysToAdd): void {
+        $dateInterval = new DateInterval('P' . abs($daysToAdd) . 'D');
+        $daysToAdd > 0 ?
+            $this->add($dateInterval) :
+            $this->sub($dateInterval);
     }
 
     public function getFormattedString(): string {
-        $dateInterval = $this->diff(new DateTime('now'));
+        $dateInterval = $this->diff(new DateTime(self::getCurrentDateTime()));
         $result = '';
 
         foreach ($this::TIME_WORD_FORMS as $timeIntervalCode => $timeIntervalForms) {
@@ -46,20 +74,32 @@ class Timer extends DateTime {
     }
 
     private function getWordFormByNumber(int $number): string {
-        $numberEnds_11_12_13_14 = $number % 100 === 11 || $number % 100 === 12 ||
-                                  $number % 100 === 13 || $number % 100 === 14;
-        if ($numberEnds_11_12_13_14) {
+        // Последние две цифры: 11, 12, 13, 14
+        if (in_array($number % 100, [11, 12, 13, 14])) {
             return 'Genitive Plural';
         }
-        $numberEnds_1_Except_11 = $number % 10 === 1;
-        if ($numberEnds_1_Except_11) {
+
+        // Последняя цифра — 1
+        if ($number % 10 === 1) {
             return 'Nominative';
         }
-        $numberEnds_2_3_4_Except_12_13_14 = $number % 10 === 2 ||
-            $number % 10 === 3 || $number % 10 === 4;
-        if ($numberEnds_2_3_4_Except_12_13_14) {
+
+        // Последняя цифра: 2, 3, 4
+        if (in_array($number % 10, [2, 3, 4])) {
             return 'Genitive Singular';
         }
+
         return 'Genitive Plural';
+    }
+
+    /** @var string|null */
+    private static $currentDateTime;
+
+    public static function setTestMode() {
+        self::$currentDateTime = '2018-03-25T14:00:00+03:00';
+    }
+
+    private static function getCurrentDateTime() {
+        return self::$currentDateTime ?? 'now';
     }
 }
