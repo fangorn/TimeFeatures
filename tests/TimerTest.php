@@ -1,15 +1,28 @@
 <?php
 
 namespace Fangorn;
+
 use PHPUnit\Framework\TestCase;
 
 class TimerTest extends TestCase {
+
+    protected function setUp() {
+        parent::setUp();
+
+        Timer::setTestMode();
+    }
+
+    public function testSimple() {
+        $timer = new Timer('2020-01-01 00:00:00');
+        assertEquals('1 год 9 месяцев 6 дней 10 часов', $timer->getFormattedString());
+        echo date('c');
+    }
 
     /**
      * @dataProvider yearsCases()
      */
     public function testAddYears(int $givenArgument, string $expectedPhrase) {
-        $timer = new Timer('now');
+        $timer = new Timer();
         $timer->addYears($givenArgument);
         assertEquals($expectedPhrase, $timer->getFormattedString());
     }
@@ -76,7 +89,7 @@ class TimerTest extends TestCase {
             '#1' => ['givenArgument'  =>  4,
                      'expectedPhrase' => '28 дней'],
             '#2' => ['givenArgument'  => -4,
-                     'expectedPhrase' => '28 дней'],
+                     'expectedPhrase' => '1 месяц'], // Потому что попали в февааль
             '#3' => ['givenArgument'  =>  1,
                      'expectedPhrase' => '7 дней'],
             '#4' => ['givenArgument'  => -1,
