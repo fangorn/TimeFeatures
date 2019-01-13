@@ -15,7 +15,6 @@ class TimerTest extends TestCase {
     public function testSimple() {
         $timer = new Timer('2020-01-01 00:00:00');
         assertEquals('1 год 9 месяцев 6 дней 10 часов', $timer->getFormattedString());
-        echo date('c');
     }
 
     /**

@@ -6,7 +6,7 @@
         "tests/"
       ]
     },
-    "files": ["src/Library.php"]
+    "files": ["src/Library.php", "src/Timer.php", "src/Cases.php"]
   },
   "require": {
   },
