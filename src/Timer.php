@@ -8,14 +8,13 @@ use DateTimeZone;
 
 class Timer extends DateTime {
 
-    // TODO: Сделать константы для падежей
     private const TIME_WORD_FORMS = [
-        'y' => ['Nominative' => 'год',     'Genitive Singular' => 'года',    'Genitive Plural' => 'лет'],
-        'm' => ['Nominative' => 'месяц',   'Genitive Singular' => 'месяца',  'Genitive Plural' => 'месяцев'],
-        'd' => ['Nominative' => 'день',    'Genitive Singular' => 'дня',     'Genitive Plural' => 'дней'],
-        'h' => ['Nominative' => 'час',     'Genitive Singular' => 'часа',    'Genitive Plural' => 'часов'],
-        'i' => ['Nominative' => 'минута',  'Genitive Singular' => 'минуты',  'Genitive Plural' => 'минут'],
-        's' => ['Nominative' => 'секунда', 'Genitive Singular' => 'секунды', 'Genitive Plural' => 'секунд']
+        'y' => [Cases::Nominative => 'год',     Cases::Genitive_Singular => 'года',    Cases::Genitive_Plural => 'лет'],
+        'm' => [Cases::Nominative => 'месяц',   Cases::Genitive_Singular => 'месяца',  Cases::Genitive_Plural => 'месяцев'],
+        'd' => [Cases::Nominative => 'день',    Cases::Genitive_Singular => 'дня',     Cases::Genitive_Plural => 'дней'],
+        'h' => [Cases::Nominative => 'час',     Cases::Genitive_Singular => 'часа',    Cases::Genitive_Plural => 'часов'],
+        'i' => [Cases::Nominative => 'минута',  Cases::Genitive_Singular => 'минуты',  Cases::Genitive_Plural => 'минут'],
+        's' => [Cases::Nominative => 'секунда', Cases::Genitive_Singular => 'секунды', Cases::Genitive_Plural => 'секунд']
     ];
 
     public function __construct(string $dateTimeString = 'now', string $timeZoneString = NULL) {
@@ -73,23 +72,23 @@ class Timer extends DateTime {
         return trim($result);
     }
 
-    private function getWordFormByNumber(int $number): string {
+    private function getWordFormByNumber(int $number): int {
         // Последние две цифры: 11, 12, 13, 14
         if (in_array($number % 100, [11, 12, 13, 14])) {
-            return 'Genitive Plural';
+            return Cases::Genitive_Plural;
         }
 
         // Последняя цифра — 1
         if ($number % 10 === 1) {
-            return 'Nominative';
+            return Cases::Nominative;
         }
 
         // Последняя цифра: 2, 3, 4
         if (in_array($number % 10, [2, 3, 4])) {
-            return 'Genitive Singular';
+            return Cases::Genitive_Singular;
         }
 
-        return 'Genitive Plural';
+        return Cases::Genitive_Plural;
     }
 
     /** @var string|null */
